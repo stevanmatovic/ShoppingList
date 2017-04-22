@@ -1,9 +1,13 @@
 package com.example.android.shoppinglist.adapter;
 
+import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.TextView;
 
+import com.example.android.shoppinglist.R;
 import com.example.android.shoppinglist.model.ShoppingList;
 
 import java.util.ArrayList;
@@ -14,8 +18,17 @@ import java.util.ArrayList;
 
 public class ShoppingListAdapter extends BaseAdapter {
 
+    private Context context;
     private ArrayList<ShoppingList> shoppingLists;
-    @Override
+    LayoutInflater inflater;
+
+
+    public ShoppingListAdapter(Context appContext, ArrayList<ShoppingList> list){
+        this.context = appContext;
+        this.shoppingLists = list;
+        inflater = LayoutInflater.from(appContext);
+    }
+
     public int getCount() {
         return shoppingLists.size();
     }
@@ -32,6 +45,10 @@ public class ShoppingListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        return null;
+
+        convertView = inflater.inflate(R.layout.shopping_list_item,null);
+        TextView name = (TextView) convertView.findViewById(R.id.tw_shoppingListItem);
+        name.setText(shoppingLists.get(position).toString());
+        return convertView;
     }
 }

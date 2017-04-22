@@ -22,4 +22,9 @@ public class MainList {
     public void setShoppingLists(ArrayList<ShoppingList> shoppingLists) {
         this.shoppingLists = shoppingLists;
     }
+
+    public void addShoppingList(String name){
+        shoppingLists.add(new ShoppingList(new ArrayList<Article>(),name));
+    }
+
 }

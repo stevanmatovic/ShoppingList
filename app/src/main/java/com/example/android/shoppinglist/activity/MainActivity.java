@@ -16,9 +16,13 @@ import com.example.android.shoppinglist.adapter.ShoppingListAdapter;
 import com.example.android.shoppinglist.model.MainList;
 import com.example.android.shoppinglist.model.ShoppingList;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity {
 
+    private MainList list;
     private ListView lw_ShoppingLists;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,17 +31,21 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        list = new MainList();
+        list.addShoppingList("Pijaca");
+        list.addShoppingList("Univer");
+        list.addShoppingList("Maxi");
         lw_ShoppingLists = (ListView) findViewById(R.id.lw_ShoppingLists);
-
-        lw_ShoppingLists.setAdapter(new ShoppingListAdapter());
+        final ShoppingListAdapter adapter = new ShoppingListAdapter(this,list.getShoppingLists());
+        lw_ShoppingLists.setAdapter(adapter);
 
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                list.addShoppingList("NoviItem");
+                adapter.notifyDataSetChanged();
             }
         });
     }
