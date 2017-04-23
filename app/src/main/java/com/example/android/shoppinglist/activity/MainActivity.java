@@ -34,7 +34,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         list = new MainList();
         lw_ShoppingLists = (ListView) findViewById(R.id.lw_ShoppingLists);
         final ShoppingListAdapter adapter = new ShoppingListAdapter(this,list.getShoppingLists());
