@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -14,7 +13,6 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -44,36 +42,44 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         list = new MainList();
         readFromFile();
-
-        Toast.makeText(this, "lista" + list.getShoppingLists().toString(), Toast.LENGTH_LONG).show();
         lw_ShoppingLists = (ListView) findViewById(R.id.lw_ShoppingLists);
+        lw_ShoppingLists.setLongClickable(true);
         final ShoppingListAdapter adapter = new ShoppingListAdapter(this,list.getShoppingLists());
         lw_ShoppingLists.setAdapter(adapter);
-        shoppingListAddListener();
 
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_add_shoppingList);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                createDialog();
+                createInsertDialog();
                 adapter.notifyDataSetChanged();
             }
         });
-    }
 
-
-
-    public void shoppingListAddListener(){
         lw_ShoppingLists.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(MainActivity.this, ArticleActivity.class);
-                intent.putExtra("LIST", list.getShoppingLists().get(position).getArticleList());
+                intent.putExtra("INDEX", position);
                 startActivity(intent);
             }
         });
+        lw_ShoppingLists.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
+                                           int pos, long id) {
+                // TODO Auto-generated method stub
+                createLongClickDialog(pos);
+                adapter.notifyDataSetChanged();
+
+                return true;
+            }
+        });
+
     }
+
+
     private void readFromFile() {
         FileInputStream fis = null;
         ObjectInputStream ois = null;
@@ -86,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-    public void createDialog(){
+    public void createInsertDialog(){
 
         AlertDialog.Builder builder= new AlertDialog.Builder(this);
         builder.setTitle("Naziv nove soping liste:");
@@ -102,7 +108,6 @@ public class MainActivity extends AppCompatActivity {
                 if(dialogResult!=null && !dialogResult.equals("")){
                     list.addShoppingList(dialogResult);
                     updateFile();
-
                 }
             }
         });
@@ -116,6 +121,28 @@ public class MainActivity extends AppCompatActivity {
         builder.show();
     }
 
+
+    public void createLongClickDialog(final int pos){
+
+        CharSequence colors[] = new CharSequence[] {"Obriši", "Otvori"};
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Izaberi opciju");
+        builder.setItems(colors, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (which==0){  //Obrisi
+                    list.getShoppingLists().remove(pos);
+                    updateFile();
+                } else if (which == 1) {
+                    Intent intent = new Intent(MainActivity.this, ArticleActivity.class);
+                    intent.putExtra("INDEX", pos);
+                    startActivity(intent);
+                }
+            }
+        });
+        builder.show();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
