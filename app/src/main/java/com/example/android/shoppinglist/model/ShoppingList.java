@@ -1,12 +1,16 @@
 package com.example.android.shoppinglist.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by Stevan on 4/22/2017.
  */
 
-public class ShoppingList {
+public class ShoppingList implements Serializable{
 
     private ArrayList<Article> articleList;
     private String name;
@@ -46,4 +50,5 @@ public class ShoppingList {
     public String toString() {
         return name;
     }
+
 }

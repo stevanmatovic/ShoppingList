@@ -5,11 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.example.android.shoppinglist.activity.MainActivity"
-    tools:showIn="@layout/activity_main">
+    tools:context="com.example.android.shoppinglist.activity.ArticleActivity"
+    tools:showIn="@layout/activity_articles">
 
     <ListView
-        android:id="@+id/lw_ShoppingLists"
+        android:id="@+id/lw_Articles"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:divider="@color/material_blue_grey_800"

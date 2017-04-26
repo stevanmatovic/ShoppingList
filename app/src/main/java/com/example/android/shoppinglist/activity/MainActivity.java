@@ -1,6 +1,8 @@
 package com.example.android.shoppinglist.activity;
 
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -11,15 +13,21 @@ import android.text.InputType;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.android.shoppinglist.R;
 import com.example.android.shoppinglist.adapter.ShoppingListAdapter;
 import com.example.android.shoppinglist.model.MainList;
 import com.example.android.shoppinglist.model.ShoppingList;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -35,12 +43,16 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         list = new MainList();
+        readFromFile();
+
+        Toast.makeText(this, "lista" + list.getShoppingLists().toString(), Toast.LENGTH_LONG).show();
         lw_ShoppingLists = (ListView) findViewById(R.id.lw_ShoppingLists);
         final ShoppingListAdapter adapter = new ShoppingListAdapter(this,list.getShoppingLists());
         lw_ShoppingLists.setAdapter(adapter);
+        shoppingListAddListener();
 
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_add_shoppingList);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -50,6 +62,30 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+
+
+    public void shoppingListAddListener(){
+        lw_ShoppingLists.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(MainActivity.this, ArticleActivity.class);
+                intent.putExtra("LIST", list.getShoppingLists().get(position).getArticleList());
+                startActivity(intent);
+            }
+        });
+    }
+    private void readFromFile() {
+        FileInputStream fis = null;
+        ObjectInputStream ois = null;
+        try {
+            fis = openFileInput("data.ser");
+            ois = new ObjectInputStream(fis);
+            list.setShoppingLists((ArrayList<ShoppingList>)ois.readObject());
+            ois.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     public void createDialog(){
 
         AlertDialog.Builder builder= new AlertDialog.Builder(this);
@@ -65,6 +101,8 @@ public class MainActivity extends AppCompatActivity {
                 dialogResult = input.getText().toString();
                 if(dialogResult!=null && !dialogResult.equals("")){
                     list.addShoppingList(dialogResult);
+                    updateFile();
+
                 }
             }
         });
@@ -99,5 +137,19 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void updateFile(){
+        try {
+
+            FileOutputStream fos = openFileOutput("data.ser", Context.MODE_PRIVATE);
+            Toast.makeText(this,"upisujem"+list.getShoppingLists().toString(),Toast.LENGTH_LONG).show();
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(list.getShoppingLists());
+            oos.close();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
 }

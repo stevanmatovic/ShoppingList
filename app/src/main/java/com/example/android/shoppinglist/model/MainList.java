@@ -1,17 +1,28 @@
 package com.example.android.shoppinglist.model;
 
+import android.content.Context;
+import android.widget.Toast;
+
+import com.example.android.shoppinglist.activity.MainActivity;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by Stevan on 4/22/2017.
  */
 
-public class MainList {
+public class MainList implements Serializable{
 
     ArrayList<ShoppingList> shoppingLists;
 
     public MainList() {
         this.shoppingLists = new ArrayList<ShoppingList>();
+
     }
 
     public ArrayList<ShoppingList> getShoppingLists() {

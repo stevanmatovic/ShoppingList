@@ -1,10 +1,12 @@
 package com.example.android.shoppinglist.model;
 
+import java.io.Serializable;
+
 /**
  * Created by Stevan on 4/22/2017.
  */
 
-public class Article {
+public class Article implements Serializable{
 
     private String name;
     private String amount;
