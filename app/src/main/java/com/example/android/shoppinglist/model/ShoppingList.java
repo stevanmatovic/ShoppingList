@@ -15,11 +15,15 @@ public class ShoppingList implements Serializable{
     private ArrayList<Article> articleList;
     private String name;
     private boolean isCompleted;
+    private boolean isProtected;
+    private String password;
 
     public ShoppingList(ArrayList<Article> articleList, String name) {
         this.articleList = articleList;
         this.name = name;
         this.isCompleted = false;
+        this.isProtected = false;
+        this.password = "";
     }
 
     public ArrayList<Article> getArticleList() {
@@ -49,6 +53,22 @@ public class ShoppingList implements Serializable{
     @Override
     public String toString() {
         return name;
+    }
+
+    public boolean isProtected() {
+        return isProtected;
+    }
+
+    public void setProtected(boolean aProtected) {
+        isProtected = aProtected;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public void addArticle(String name, String amount){

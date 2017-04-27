@@ -55,10 +55,8 @@ public class MainActivity extends AppCompatActivity {
         lw_ShoppingLists.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(MainActivity.this, ArticleActivity.class);
-                intent.putExtra("INDEX", position);
-                intent.putExtra("TOOLBAR",list.getShoppingLists().get(position).getName());
-                startActivityForResult(intent,0);
+                openNewActivity(position);
+
             }
         });
         lw_ShoppingLists.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -74,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+
 
     public void createInsertDialog(final DAO dao){
 
@@ -105,6 +104,85 @@ public class MainActivity extends AppCompatActivity {
         builder.show();
     }
 
+    public void openNewActivityWithoutPassword(final int position){
+        Intent intent = new Intent(MainActivity.this, ArticleActivity.class);
+        intent.putExtra("INDEX", position);
+        intent.putExtra("TOOLBAR",list.getShoppingLists().get(position).getName());
+        startActivityForResult(intent,0);
+    }
+
+    public void openNewActivity(final int position){
+        if(list.getShoppingLists().get(position).isProtected()) {
+            requirePassword(position);
+            return;
+        }
+
+        Intent intent = new Intent(MainActivity.this, ArticleActivity.class);
+        intent.putExtra("INDEX", position);
+        intent.putExtra("TOOLBAR",list.getShoppingLists().get(position).getName());
+        startActivityForResult(intent,0);
+    }
+
+    public boolean requirePassword(final int position){
+        AlertDialog.Builder builder= new AlertDialog.Builder(this);
+        builder.setTitle("Unesi password:");
+
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        builder.setView(input);
+
+        boolean match;
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialogResult = input.getText().toString();
+                if(dialogResult!=null && !dialogResult.equals("")){
+                    if(list.getShoppingLists().get(position).getPassword().equals(dialogResult))
+                        openNewActivityWithoutPassword(position);
+                }
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+        return false;
+    }
+
+    public void createPassword(final int pos){
+        AlertDialog.Builder builder= new AlertDialog.Builder(this);
+        builder.setTitle("Napravi password:");
+
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        builder.setView(input);
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialogResult = input.getText().toString();
+                if(dialogResult!=null && !dialogResult.equals("")){
+                    list.getShoppingLists().get(pos).setPassword(dialogResult);
+                    list.getShoppingLists().get(pos).setProtected(true);
+                    dao.updateFile(list,MainActivity.this);
+                    adapter.notifyDataSetChanged();
+                }
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+    }
 
     public void changeNameDialog(final int pos){
         AlertDialog.Builder builder= new AlertDialog.Builder(this);
@@ -137,7 +215,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void createLongClickDialog(final int pos,final DAO dao){
 
-        CharSequence colors[] = new CharSequence[] {"Obriši", "Otvori","Preimenuj"};
+        CharSequence colors[] = new CharSequence[] {"Obriši", "Otvori","Preimenuj","Stavi Password"};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Izaberi opciju");
@@ -150,12 +228,13 @@ public class MainActivity extends AppCompatActivity {
                     adapter.notifyDataSetChanged();
 
                 } else if (which == 1) {
-                    Intent intent = new Intent(MainActivity.this, ArticleActivity.class);
-                    intent.putExtra("INDEX", pos);
-                    startActivityForResult(intent,0);
+                    openNewActivity(pos);
                 } else if( which == 2){
                     changeNameDialog(pos);
+                } else if(which == 3){
+                    createPassword(pos);
                 }
+
             }
         });
         builder.show();
