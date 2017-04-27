@@ -70,9 +70,10 @@ public class MainActivity extends AppCompatActivity {
             public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
                                            int pos, long id) {
                 // TODO Auto-generated method stub
+
                 createLongClickDialog(pos);
                 adapter.notifyDataSetChanged();
-
+                adapter.notifyDataSetInvalidated();
                 return true;
             }
         });
@@ -88,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
             ois = new ObjectInputStream(fis);
             list.setShoppingLists((ArrayList<ShoppingList>)ois.readObject());
             ois.close();
+            fis.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -134,6 +136,7 @@ public class MainActivity extends AppCompatActivity {
                 if (which==0){  //Obrisi
                     list.getShoppingLists().remove(pos);
                     updateFile();
+
                 } else if (which == 1) {
                     Intent intent = new Intent(MainActivity.this, ArticleActivity.class);
                     intent.putExtra("INDEX", pos);
@@ -170,10 +173,10 @@ public class MainActivity extends AppCompatActivity {
         try {
 
             FileOutputStream fos = openFileOutput("data.ser", Context.MODE_PRIVATE);
-            Toast.makeText(this,"upisujem"+list.getShoppingLists().toString(),Toast.LENGTH_LONG).show();
             ObjectOutputStream oos = new ObjectOutputStream(fos);
             oos.writeObject(list.getShoppingLists());
             oos.close();
+            fos.close();
         }catch (Exception e){
             e.printStackTrace();
         }

@@ -51,4 +51,11 @@ public class ShoppingList implements Serializable{
         return name;
     }
 
+    public void addArticle(String name, String amount){
+        if (amount==null){
+            amount = "";
+        }
+        articleList.add(new Article(name,amount));
+    }
+
 }

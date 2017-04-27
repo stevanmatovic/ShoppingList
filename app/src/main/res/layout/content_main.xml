@@ -14,6 +14,7 @@
         android:layout_height="wrap_content"
         android:divider="@color/material_blue_grey_800"
         android:dividerHeight="1dp"
+        android:visibility="visible"
         android:footerDividersEnabled="false"
         tools:layout_editor_absoluteY="0dp"
         tools:layout_editor_absoluteX="8dp">
