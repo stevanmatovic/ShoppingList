@@ -58,4 +58,13 @@ public class ShoppingList implements Serializable{
         articleList.add(new Article(name,amount));
     }
 
+    public void checkIsCompleted() {
+        this.isCompleted = true;
+        for(Article a: articleList){
+            if (!a.isCompleted()) {
+                this.isCompleted = false;
+                break;
+            }
+        }
+    }
 }

@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.example.android.shoppinglist.R;
 import com.example.android.shoppinglist.adapter.ShoppingListAdapter;
+import com.example.android.shoppinglist.files.DAO;
 import com.example.android.shoppinglist.model.MainList;
 import com.example.android.shoppinglist.model.ShoppingList;
 
@@ -41,7 +42,10 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         list = new MainList();
-        readFromFile();
+        final DAO dao = new DAO("data.ser");
+        list = dao.readFromFile(this);
+      //  readFromFile();
+
         lw_ShoppingLists = (ListView) findViewById(R.id.lw_ShoppingLists);
         lw_ShoppingLists.setLongClickable(true);
         final ShoppingListAdapter adapter = new ShoppingListAdapter(this,list.getShoppingLists());
@@ -52,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                createInsertDialog();
+                createInsertDialog(dao);
                 adapter.notifyDataSetChanged();
             }
         });
@@ -62,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(MainActivity.this, ArticleActivity.class);
                 intent.putExtra("INDEX", position);
+                intent.putExtra("TOOLBAR",list.getShoppingLists().get(position).getName());
                 startActivity(intent);
             }
         });
@@ -71,30 +76,15 @@ public class MainActivity extends AppCompatActivity {
                                            int pos, long id) {
                 // TODO Auto-generated method stub
 
-                createLongClickDialog(pos);
+                createLongClickDialog(pos,dao);
                 adapter.notifyDataSetChanged();
-                adapter.notifyDataSetInvalidated();
                 return true;
             }
         });
 
     }
 
-
-    private void readFromFile() {
-        FileInputStream fis = null;
-        ObjectInputStream ois = null;
-        try {
-            fis = openFileInput("data.ser");
-            ois = new ObjectInputStream(fis);
-            list.setShoppingLists((ArrayList<ShoppingList>)ois.readObject());
-            ois.close();
-            fis.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    public void createInsertDialog(){
+    public void createInsertDialog(final DAO dao){
 
         AlertDialog.Builder builder= new AlertDialog.Builder(this);
         builder.setTitle("Naziv nove soping liste:");
@@ -109,7 +99,8 @@ public class MainActivity extends AppCompatActivity {
                 dialogResult = input.getText().toString();
                 if(dialogResult!=null && !dialogResult.equals("")){
                     list.addShoppingList(dialogResult);
-                    updateFile();
+                    //updateFile();
+                    dao.updateFile(list,MainActivity.this);
                 }
             }
         });
@@ -124,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void createLongClickDialog(final int pos){
+    public void createLongClickDialog(final int pos,final DAO dao){
 
         CharSequence colors[] = new CharSequence[] {"Obriši", "Otvori"};
 
@@ -135,7 +126,8 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 if (which==0){  //Obrisi
                     list.getShoppingLists().remove(pos);
-                    updateFile();
+                    //updateFile();
+                    dao.updateFile(list,MainActivity.this);
 
                 } else if (which == 1) {
                     Intent intent = new Intent(MainActivity.this, ArticleActivity.class);
@@ -169,17 +161,4 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void updateFile(){
-        try {
-
-            FileOutputStream fos = openFileOutput("data.ser", Context.MODE_PRIVATE);
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-            oos.writeObject(list.getShoppingLists());
-            oos.close();
-            fos.close();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-    }
 }

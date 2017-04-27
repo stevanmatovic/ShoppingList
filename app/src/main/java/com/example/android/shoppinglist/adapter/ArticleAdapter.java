@@ -1,6 +1,7 @@
 package com.example.android.shoppinglist.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,6 +52,10 @@ public class ArticleAdapter extends BaseAdapter {
         TextView amount = (TextView) convertView.findViewById(R.id.tw_amount);
         name.setText(articles.get(position).getName());
         amount.setText(articles.get(position).getAmount());
+        if(articles.get(position).isCompleted()){
+            name.setBackgroundColor(Color.parseColor("#AED581"));
+            amount.setBackgroundColor(Color.parseColor("#AED581"));
+        }
         return convertView;
     }
 

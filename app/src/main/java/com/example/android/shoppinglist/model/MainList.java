@@ -38,4 +38,5 @@ public class MainList implements Serializable{
         shoppingLists.add(new ShoppingList(new ArrayList<Article>(),name));
     }
 
+
 }
