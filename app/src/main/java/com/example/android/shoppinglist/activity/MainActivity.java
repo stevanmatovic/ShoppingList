@@ -1,6 +1,5 @@
 package com.example.android.shoppinglist.activity;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,19 +14,11 @@ import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.example.android.shoppinglist.R;
 import com.example.android.shoppinglist.adapter.ShoppingListAdapter;
-import com.example.android.shoppinglist.files.DAO;
+import com.example.android.shoppinglist.dao.DAO;
 import com.example.android.shoppinglist.model.MainList;
-import com.example.android.shoppinglist.model.ShoppingList;
-
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -35,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
     private ListView lw_ShoppingLists;
     private String dialogResult;
     private ShoppingListAdapter adapter;
-
+    final private DAO dao = new DAO("data.ser");
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,7 +34,6 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         list = new MainList();
-        final DAO dao = new DAO("data.ser");
         list = dao.readFromFile(this);
       //  readFromFile();
 
@@ -68,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(MainActivity.this, ArticleActivity.class);
                 intent.putExtra("INDEX", position);
                 intent.putExtra("TOOLBAR",list.getShoppingLists().get(position).getName());
-                startActivity(intent);
+                startActivityForResult(intent,0);
             }
         });
         lw_ShoppingLists.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -134,8 +124,7 @@ public class MainActivity extends AppCompatActivity {
                 } else if (which == 1) {
                     Intent intent = new Intent(MainActivity.this, ArticleActivity.class);
                     intent.putExtra("INDEX", pos);
-                    startActivity(intent);
-
+                    startActivityForResult(intent,0);
                 }
             }
         });
@@ -164,4 +153,11 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        list.getShoppingLists().clear();
+        list.getShoppingLists().addAll(dao.readFromFile(MainActivity.this).getShoppingLists());
+        this.adapter.notifyDataSetChanged();
+    }
 }

@@ -1,4 +1,4 @@
-package com.example.android.shoppinglist.files;
+package com.example.android.shoppinglist.dao;
 
 import android.content.Context;
 

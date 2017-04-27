@@ -38,5 +38,10 @@ public class MainList implements Serializable{
         shoppingLists.add(new ShoppingList(new ArrayList<Article>(),name));
     }
 
-
+    @Override
+    public String toString() {
+        return "MainList{" +
+                "shoppingLists=" + shoppingLists +
+                '}';
+    }
 }

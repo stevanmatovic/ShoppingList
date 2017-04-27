@@ -1,15 +1,11 @@
 package com.example.android.shoppinglist.activity;
 
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.InputType;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -19,18 +15,14 @@ import android.widget.Toast;
 
 import com.example.android.shoppinglist.R;
 import com.example.android.shoppinglist.adapter.ArticleAdapter;
-import com.example.android.shoppinglist.files.DAO;
+import com.example.android.shoppinglist.dao.DAO;
 import com.example.android.shoppinglist.model.MainList;
 import com.example.android.shoppinglist.model.ShoppingList;
 
 //import static com.example.android.shoppinglist.R.id.fab;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
 
 import static com.example.android.shoppinglist.R.id.fab_add_article;
+import static com.example.android.shoppinglist.R.id.fab_add_finish;
 
 public class ArticleActivity extends AppCompatActivity {
 
@@ -77,6 +69,16 @@ public class ArticleActivity extends AppCompatActivity {
                 createLongClickDialog(position,dao);
                 adapter.notifyDataSetChanged();
                 return true;
+            }
+        });
+
+
+        FloatingActionButton fabFinish = (FloatingActionButton) findViewById(fab_add_finish);
+        fabFinish.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setResult(0,null);
+                finish();
             }
         });
 
