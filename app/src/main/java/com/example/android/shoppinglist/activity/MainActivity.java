@@ -106,9 +106,38 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    public void changeNameDialog(final int pos){
+        AlertDialog.Builder builder= new AlertDialog.Builder(this);
+        builder.setTitle("Novo ime:");
+
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
+        builder.setView(input);
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialogResult = input.getText().toString();
+                if(dialogResult!=null && !dialogResult.equals("")){
+                    list.getShoppingLists().get(pos).setName(dialogResult);
+                    dao.updateFile(list,MainActivity.this);
+                    adapter.notifyDataSetChanged();
+                }
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+    }
+
     public void createLongClickDialog(final int pos,final DAO dao){
 
-        CharSequence colors[] = new CharSequence[] {"Obriši", "Otvori"};
+        CharSequence colors[] = new CharSequence[] {"Obriši", "Otvori","Preimenuj"};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Izaberi opciju");
@@ -117,7 +146,6 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 if (which==0){  //Obrisi
                     list.getShoppingLists().remove(pos);
-                    //updateFile();
                     dao.updateFile(list,MainActivity.this);
                     adapter.notifyDataSetChanged();
 
@@ -125,6 +153,8 @@ public class MainActivity extends AppCompatActivity {
                     Intent intent = new Intent(MainActivity.this, ArticleActivity.class);
                     intent.putExtra("INDEX", pos);
                     startActivityForResult(intent,0);
+                } else if( which == 2){
+                    changeNameDialog(pos);
                 }
             }
         });
