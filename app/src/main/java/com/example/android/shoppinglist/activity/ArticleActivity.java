@@ -6,6 +6,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -28,6 +29,7 @@ public class ArticleActivity extends AppCompatActivity {
     private String dialogResultAmount;
     private MainList parent;
     private ArticleAdapter adapter;
+    private final DAO dao = new DAO("data.ser");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +37,6 @@ public class ArticleActivity extends AppCompatActivity {
         setContentView(R.layout.activity_articles);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_article);
 
-        final DAO dao = new DAO("data.ser");
 
         Bundle extras = getIntent().getExtras();
         int i = -1;
@@ -78,7 +79,7 @@ public class ArticleActivity extends AppCompatActivity {
 
 
     private void createLongClickDialog(final int pos,final DAO dao){
-        CharSequence colors[] = new CharSequence[] {"Obriši", "Označi da je kupljeno"};
+        CharSequence colors[] = new CharSequence[] {"Obriši", "Označi da je kupljeno","Preimenuj","Promeni količinu"};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Izaberi opciju");
@@ -95,12 +96,73 @@ public class ArticleActivity extends AppCompatActivity {
                     list.checkIsCompleted();
                     dao.updateFile(parent,ArticleActivity.this);
                     adapter.notifyDataSetChanged();
+                }else if(which == 2){
+                    dialogPreimenuj(pos);
+                }else if(which == 3){
+                    dialogPromeniKolicinu(pos);
                 }
             }
         });
         builder.show();
     }
 
+    public void dialogPreimenuj(final int pos){
+        AlertDialog.Builder builder= new AlertDialog.Builder(this);
+        builder.setTitle("Novi naziv:");
+
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
+        builder.setView(input);
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String dialogResult = input.getText().toString();
+                if(dialogResult!=null && !dialogResult.equals("")){
+                    list.getArticleList().get(pos).setName(dialogResult);
+                    dao.updateFile(parent,ArticleActivity.this);
+                    adapter.notifyDataSetChanged();
+                }
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+    }
+
+    public void dialogPromeniKolicinu(final int pos){
+        AlertDialog.Builder builder= new AlertDialog.Builder(this);
+        builder.setTitle("Količina:");
+
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
+        builder.setView(input);
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String dialogResult = input.getText().toString();
+                if(dialogResult!=null && !dialogResult.equals("")){
+                    list.getArticleList().get(pos).setAmount(dialogResult);
+                    dao.updateFile(parent,ArticleActivity.this);
+                    adapter.notifyDataSetChanged();
+                }
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+    }
 
     public void createInsertArticleDialog(final DAO dao){
 
