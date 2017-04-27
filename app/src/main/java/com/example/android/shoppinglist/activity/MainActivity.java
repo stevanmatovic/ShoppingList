@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private MainList list;
     private ListView lw_ShoppingLists;
     private String dialogResult;
+    private ShoppingListAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
 
         lw_ShoppingLists = (ListView) findViewById(R.id.lw_ShoppingLists);
         lw_ShoppingLists.setLongClickable(true);
-        final ShoppingListAdapter adapter = new ShoppingListAdapter(this,list.getShoppingLists());
+        adapter = new ShoppingListAdapter(this,list.getShoppingLists());
         lw_ShoppingLists.setAdapter(adapter);
 
 
@@ -99,8 +100,8 @@ public class MainActivity extends AppCompatActivity {
                 dialogResult = input.getText().toString();
                 if(dialogResult!=null && !dialogResult.equals("")){
                     list.addShoppingList(dialogResult);
-                    //updateFile();
                     dao.updateFile(list,MainActivity.this);
+                    adapter.notifyDataSetChanged();
                 }
             }
         });
@@ -128,11 +129,13 @@ public class MainActivity extends AppCompatActivity {
                     list.getShoppingLists().remove(pos);
                     //updateFile();
                     dao.updateFile(list,MainActivity.this);
+                    adapter.notifyDataSetChanged();
 
                 } else if (which == 1) {
                     Intent intent = new Intent(MainActivity.this, ArticleActivity.class);
                     intent.putExtra("INDEX", pos);
                     startActivity(intent);
+
                 }
             }
         });

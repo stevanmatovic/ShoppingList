@@ -39,6 +39,7 @@ public class ArticleActivity extends AppCompatActivity {
     private String dialogResultName;
     private String dialogResultAmount;
     private MainList parent;
+    private ArticleAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +68,7 @@ public class ArticleActivity extends AppCompatActivity {
         list = parent.getShoppingLists().get(i);
         Toast.makeText(this, i +"  " +parent.getShoppingLists(), Toast.LENGTH_LONG).show();
         lw_Articles = (ListView) findViewById(R.id.lw_Articles);
-        final ArticleAdapter adapter = new ArticleAdapter(this,list.getArticleList());
+        adapter = new ArticleAdapter(this,list.getArticleList());
         lw_Articles.setAdapter(adapter);
 
         lw_Articles.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -100,14 +101,14 @@ public class ArticleActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 if (which==0){  //Obrisi
                     list.getArticleList().remove(pos);
-                    //updateFile();
                     dao.updateFile(parent,ArticleActivity.this);
+                    adapter.notifyDataSetChanged();
 
-                } else if (which == 1) {
+                } else if (which == 1) {        //Oznaci da je kupljeno
                     list.getArticleList().get(pos).setCompleted(true);
                     list.checkIsCompleted();
                     dao.updateFile(parent,ArticleActivity.this);
-                    //updateFile();
+                    adapter.notifyDataSetChanged();
                 }
             }
         });
@@ -139,6 +140,7 @@ public class ArticleActivity extends AppCompatActivity {
                     list.addArticle(dialogResultName,dialogResultAmount);
                     list.setCompleted(false);
                     dao.updateFile(parent,ArticleActivity.this);
+                    adapter.notifyDataSetChanged();
                 }
             }
         });
