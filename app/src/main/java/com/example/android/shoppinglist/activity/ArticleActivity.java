@@ -11,18 +11,14 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.Toast;
-
 import com.example.android.shoppinglist.R;
 import com.example.android.shoppinglist.adapter.ArticleAdapter;
 import com.example.android.shoppinglist.dao.DAO;
 import com.example.android.shoppinglist.model.MainList;
 import com.example.android.shoppinglist.model.ShoppingList;
 
-//import static com.example.android.shoppinglist.R.id.fab;
 
 import static com.example.android.shoppinglist.R.id.fab_add_article;
-import static com.example.android.shoppinglist.R.id.fab_add_finish;
 
 public class ArticleActivity extends AppCompatActivity {
 
@@ -56,9 +52,7 @@ public class ArticleActivity extends AppCompatActivity {
         lw_Articles = (ListView) findViewById(R.id.lw_Articles);
         parent = new MainList();
         parent = dao.readFromFile(this);
-        //readFromFile();
         list = parent.getShoppingLists().get(i);
-        Toast.makeText(this, i +"  " +parent.getShoppingLists(), Toast.LENGTH_LONG).show();
         lw_Articles = (ListView) findViewById(R.id.lw_Articles);
         adapter = new ArticleAdapter(this,list.getArticleList());
         lw_Articles.setAdapter(adapter);
@@ -69,16 +63,6 @@ public class ArticleActivity extends AppCompatActivity {
                 createLongClickDialog(position,dao);
                 adapter.notifyDataSetChanged();
                 return true;
-            }
-        });
-
-
-        FloatingActionButton fabFinish = (FloatingActionButton) findViewById(fab_add_finish);
-        fabFinish.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                setResult(0,null);
-                finish();
             }
         });
 
